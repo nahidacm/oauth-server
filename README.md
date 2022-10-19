@@ -12,7 +12,7 @@ docker run --rm \
     laravelsail/php81-composer:latest \
     composer install --ignore-platform-reqs
 ```
-4. comy `.env.example` to `.env` 
-5.`./vendor/bin/sail up -d`
+4. copy `.env.example` to `.env` 
+5. `./vendor/bin/sail up -d`
 6. Make the `sail` alias if you need https://laravel.com/docs/9.x/sail#configuring-a-shell-alias
 7. `sail artisan migrate`
