@@ -16,3 +16,4 @@ docker run --rm \
 5. `./vendor/bin/sail up -d`
 6. Make the `sail` alias if you need https://laravel.com/docs/9.x/sail#configuring-a-shell-alias
 7. `sail artisan migrate`
+8. `sail artisan breeze:install`
