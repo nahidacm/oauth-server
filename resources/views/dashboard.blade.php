@@ -14,11 +14,4 @@
             </div>
         </div>
     </div>
-
-    <script>
-        axios.get('/oauth/clients')
-            .then(response => {
-                console.log(response.data);
-            });
-    </script>
 </x-app-layout>
