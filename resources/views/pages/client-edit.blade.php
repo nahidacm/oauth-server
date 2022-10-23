@@ -1,7 +1,8 @@
 @extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
 
 @section('content')
-
+@push('css')
+@endpush
 
 @include('layouts.navbars.auth.topnav', ['title' => 'Your Profile'])
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -94,7 +95,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <form action="{{url("/oauth/clients")}}" id="uploadForm" role="form" method="POST" enctype="multipart/form-data">
+                <form action="/client-update/{{$client->id}}" id="uploadForm" role="form" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="card-header pb-0">
                         <div class="d-flex align-items-center">
@@ -108,30 +109,33 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label"><span class="required">*</span>Client Name</label>
-                                    <input class="form-control" type="text" name="name" value="">
+                                    <input class="form-control" type="text" name="name" value="{{$client->name}}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label"><span class="required">*</span>Redirect URL</label>
-                                    <input class="form-control" type="text" name="redirect" value="">
+                                    <input class="form-control" type="text" name="redirect" value="{{$client->redirect}}">
                                 </div>
                             </div>
 
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label for="formFile" class="form-label">{{ __('Image') }}</label>
-                                    <input class="form-control" type="file" name="image_url" placeholder="Choose image" id="files">
-                                    @error('image_url')
-                                    <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="user-name" class="form-control-label">{{ __('Image') }}</label>
+                                <input class="form-control" type="file" name="image_url" placeholder="Choose image" id="files">
+                                @error('icon_url')
+                                <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
+                                @enderror
+                                @if(isset($client->image_url))
+                                <span class="pip">
+                                    <img class="imageThumb" src="{{ $client->image_url }}" title="" />
+                                    <span data="1" class="remove">Remove image</span>
+                                </span>
+                                @endif
                             </div>
                         </div>
-
                     </div>
                 </form>
             </div>
@@ -146,6 +150,10 @@
 
 <script>
     $(document).ready(function() {
+        $('.remove').click(function(e) {
+            $(this).parent(".pip").remove();
+
+        });
 
         if (window.File && window.FileList && window.FileReader) {
             $("#files").on("change", function(e) {
@@ -178,7 +186,7 @@
 <script>
     jQuery("#uploadForm").submit(function(e) {
         e.preventDefault();
-        formPost('uploadForm', 'main-submit-button', '{{ url("/oauth/clients") }}', '{{ url("/client-management") }}')
+        formPost('uploadForm', 'main-submit-button', '{{ route("update",$client->id) }}', '{{ url("/client-management") }}')
     });
 </script>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,13 +18,23 @@ class PageController extends Controller
     {
 
         if ($page == "client-management") {
-            $data = DB::table('oauth_clients')->get();
+            $data = DB::table('oauth_clients')->paginate(10);
             if (view()->exists("pages.{$page}")) {
                 return view("pages.{$page}", [
                     'data' => $data
                 ]);
             }
         }
+
+        if ($page == "user-management") {
+            $data = User::where('user_type', 'user')->paginate(10);
+            if (view()->exists("pages.{$page}")) {
+                return view("pages.{$page}", [
+                    'data' => $data
+                ]);
+            }
+        }
+
 
         if (view()->exists("pages.{$page}")) {
             return view("pages.{$page}");

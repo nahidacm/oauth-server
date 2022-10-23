@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Http\Rules\RedirectRule;
 use Laravel\Passport\Passport;
@@ -85,7 +89,6 @@ class ClientController extends Controller
                 'name' => 'required|max:191',
                 'redirect' => ['required', $this->redirectRule],
                 'confidential' => 'boolean',
-
             ]
         );
 
@@ -93,22 +96,63 @@ class ClientController extends Controller
             return $this->ajaxResponse(422, 'The given data was invalid.', $validator->errors(), []);
         }
 
-        $client = $this->clients->create(
-            $request->user()->getAuthIdentifier(),
-            $request->name,
-            $request->redirect,
-            null,
-            false,
-            false,
-            (bool) $request->input('confidential', true)
-        );
+        try {
 
-        if (Passport::$hashesClientSecrets) {
-            return ['plainSecret' => $client->plainSecret] + $client->toArray();
+            $file = $request->file('image_url');
+            $paths = "";
+            if ($file) {
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $storeName = $fileName;
+
+                $path = base_path('public/images/uploads');
+                if (File::isDirectory($path)) {
+                    File::makeDirectory($path, 0777, true, true);
+                }
+                $file->move(base_path('public/images/uploads'), $storeName);
+                $paths = '/images/uploads/' . $storeName;
+            }
+
+
+            $client = $this->clients->create(
+                $request->user()->getAuthIdentifier(),
+                $request->name,
+                $request->redirect,
+                null,
+                false,
+                false,
+                (bool) $request->input('confidential', true)
+            );
+
+            $client->image_url = $paths;
+            $client->save();
+
+            if (Passport::$hashesClientSecrets) {
+                return ['plainSecret' => $client->plainSecret] + $client->toArray();
+            }
+
+            return $this->ajaxResponse(200, 'Client created successfully.', [], []);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Log::error([$exception->getFile(), $exception->getLine(), $exception->getMessage()]);
+            return $this->ajaxResponse(500, $exception->getMessage(), [], []);
         }
-
-        return $client->makeVisible('secret');
     }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Department  $department
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $client = Client::find($id);
+        return view('pages.client-edit', [
+            'client' => $client,
+
+        ]);
+    }
+
 
     /**
      * Update the given client.
@@ -119,22 +163,57 @@ class ClientController extends Controller
      */
     public function update(Request $request, $clientId)
     {
+
         $client = $this->clients->findForUser($clientId, $request->user()->getAuthIdentifier());
 
         if (!$client) {
-            return new Response('', 404);
+            return $this->ajaxResponse(404, 'Client not found.', [], []);
         }
 
-        $this->validation->make($request->all(), [
-            'name' => 'required|max:191',
-            'redirect' => ['required', $this->redirectRule],
-        ])->validate();
-
-        return $this->clients->update(
-            $client,
-            $request->name,
-            $request->redirect
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required|max:191',
+                'redirect' => ['required', $this->redirectRule],
+            ]
         );
+        if ($validator->fails()) {
+            return $this->ajaxResponse(422, 'The given data was invalid.', $validator->errors(), []);
+        }
+        try {
+
+            $file = $request->file('image_url');
+            Log::info($request);
+            $paths = $client->image_url;
+
+            if ($file) {
+
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                Log::info($fileName);
+                $storeName = $fileName;
+                $path = base_path('public/images/uploads');
+                if (File::isDirectory($path)) {
+                    File::makeDirectory($path, 0777, true, true);
+                }
+                $file->move(base_path('public/images/uploads'), $storeName);
+                $paths = '/images/uploads/' . $storeName;
+            }
+
+
+            $this->clients->update(
+                $client,
+                $request->name,
+                $request->redirect
+            );
+
+            $client->image_url = $paths ?? $client->image_url;
+            $client->save();
+
+            return $this->ajaxResponse(200, 'Client updated successfully.', [], []);
+        } catch (\Exception $exception) {
+
+            return $this->ajaxResponse(500, $exception->getMessage(), [], []);
+        }
     }
 
     /**
@@ -144,18 +223,21 @@ class ClientController extends Controller
      * @param  string  $clientId
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $clientId)
+    public function destroy(Request $request, $id)
     {
-        $client = $this->clients->findForUser($clientId, $request->user()->getAuthIdentifier());
 
+        $client = DB::table('oauth_clients')->where('id', $id)->first();
         if (!$client) {
             return new Response('', 404);
         }
 
-        $this->clients->delete($client);
-
-        return new Response('', Response::HTTP_NO_CONTENT);
+        DB::table('oauth_clients')->where('id', $id)->delete();
+        session()->flash('success', 'Client deleted successfully.');
+        return redirect('/client-management');
     }
+
+
+
 
     public function ajaxResponse($code, $message = "The given data was invalid.", $errors = null, $data = null)
     {

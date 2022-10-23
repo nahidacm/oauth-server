@@ -10,12 +10,12 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <form action="{{route('user.create')}}" id="uploadForm" role="form" method="POST" enctype="multipart/form-data">
+                <form action="{{route('user.update',$user->id)}}" id="uploadForm" role="form" method="POST" enctype="multipart/form-data">
 
                     @csrf
                     <div class="card-header pb-0">
                         <div class="d-flex align-items-center">
-                            <p class="mb-0">Create User</p>
+                            <p class="mb-0">Update User</p>
                             <button type="submit" class="btn btn-primary btn-sm ms-auto">Save</button>
                         </div>
                     </div>
@@ -25,19 +25,19 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Name</label>
-                                    <input class="form-control" type="text" name="name">
+                                    <input class="form-control" type="text" name="name" value="{{$user->name ?? ''}}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Email address</label>
-                                    <input class="form-control" type="email" name="email">
+                                    <input class="form-control" type="email" name="email" value="{{$user->email ?? ''}}">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Mobile</label>
-                                    <input class="form-control" type="text" name="mobile">
+                                    <input class="form-control" type="text" name="mobile" value="{{$user->mobile}}">
                                 </div>
                             </div>
 
@@ -55,7 +55,7 @@
 <script>
     jQuery("#uploadForm").submit(function(e) {
         e.preventDefault();
-        formPost('uploadForm', 'main-submit-button', "{{ route('user.create') }}", '{{ url("/user-management") }}')
+        formPost('uploadForm', 'main-submit-button', "{{ route('user.update',$user->id) }}", '{{ url("/user-management") }}')
     });
 </script>
 
