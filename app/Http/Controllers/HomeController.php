@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
-        /**
+    /**
      * Create a new controller instance.
      *
      * @return void
@@ -23,6 +25,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('pages.dashboard');
+        $users = User::where('user_type', 'user')->count();
+        $client = DB::table('oauth_clients')->count();
+
+        return view('pages.dashboard', [
+            'users' => $users,
+            'client' => $client
+        ]);
     }
 }

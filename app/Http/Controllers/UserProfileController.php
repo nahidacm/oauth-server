@@ -20,15 +20,9 @@ class UserProfileController extends Controller
         ]);
 
         auth()->user()->update([
-            'username' => $request->get('username'),
-            'firstname' => $request->get('firstname'),
-            'lastname' => $request->get('lastname'),
+            'name' => $request->get('name'),
             'email' => $request->get('email'),
-            'address' => $request->get('address'),
-            'city' => $request->get('city'),
-            'country' => $request->get('country'),
-            'postal' => $request->get('postal'),
-            'about' => $request->get('about')
+            'mobile' => $request->get('mobile')
         ]);
         return back()->with('succes', 'Profile succesfully updated');
     }
