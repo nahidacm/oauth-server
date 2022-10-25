@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -24,6 +25,8 @@ class UserController extends Controller
             [
                 'name' => ['required', 'max:255', 'min:2'],
                 'email' => ['required', 'email', 'max:255',  Rule::unique('users')->ignore(auth()->user()->id),],
+                'mobile' => 'unique:users,mobile',
+
             ]
         );
 
@@ -36,7 +39,7 @@ class UserController extends Controller
             User::create([
                 'name' => $request->name ?? '',
                 'email' => $request->email,
-                'password' => rand(1, 4),
+                'password' => Hash::make($request->password),
                 'mobile' => $request->mobile ?? null,
                 'user_type' => 'user',
 
