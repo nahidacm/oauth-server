@@ -69,5 +69,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/user-edit/{id}', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/user-delete/{id}', [UserController::class, 'destroy'])->name('user.delete');
     Route::post('/user-update/{id}', [UserController::class, 'update'])->name('user.update');
-    Route::get('/{page}', [PageController::class, 'index'])->name('page');
+    Route::get('/{page}', [PageController::class, 'index'])->name('page')->middleware('admin');
 });

@@ -27,7 +27,7 @@ class PageController extends Controller
         }
 
         if ($page == "user-management") {
-            $data = User::where('user_type', 'user')->paginate(10);
+            $data = User::paginate(10);
             if (view()->exists("pages.{$page}")) {
                 return view("pages.{$page}", [
                     'data' => $data

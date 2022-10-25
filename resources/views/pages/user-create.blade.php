@@ -41,6 +41,27 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="example-text-input" class="form-control-label">User Type</label>
+                                    <select class="form-select" name="user_type" aria-label="Default select example">
+                                        <option selected disabled>Select Type</option>
+                                        <option value="user">user</option>
+                                        <option value="admin">admin</option>
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="example-text-input" class="form-control-label">Password</label>
+                                    <input class="form-control" type="password" name="password">
+                                </div>
+                            </div>
+
+
+
                         </div>
                         <hr class="horizontal dark">
                     </div>

@@ -40,6 +40,28 @@
                                     <input class="form-control" type="text" name="mobile" value="{{$user->mobile}}">
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="example-text-input" class="form-control-label">User Type</label>
+                                    <select class="form-select" name="user_type" aria-label="Default select example">
+                                        <option selected disabled>Select Type</option>
+                                        <option @if ($user->user_type == 'user')
+                                            selected
+                                            @endif value="user">user</option>
+                                        <option @if ($user->user_type == 'admin')
+                                            selected
+                                            @endif value="admin">admin</option>
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="example-text-input" class="form-control-label">Password</label>
+                                    <input class="form-control" type="password" name="password">
+                                </div>
+                            </div>
 
                         </div>
                         <hr class="horizontal dark">

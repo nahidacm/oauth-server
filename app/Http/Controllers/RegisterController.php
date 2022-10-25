@@ -22,7 +22,7 @@ class RegisterController extends Controller
         ]);
 
         $user = User::create($attributes);
-        $user->user_type = 'admin';
+        $user->user_type = 'user';
         $user->save();
         auth()->login($user);
 

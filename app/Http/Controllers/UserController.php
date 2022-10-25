@@ -39,9 +39,9 @@ class UserController extends Controller
             User::create([
                 'name' => $request->name ?? '',
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => $request->password,
                 'mobile' => $request->mobile ?? null,
-                'user_type' => 'user',
+                'user_type' => $request->user_type ?? 'user',
 
             ]);
 
@@ -79,6 +79,8 @@ class UserController extends Controller
             [
                 'name' => ['required', 'max:255', 'min:2'],
                 'email' => ['required', 'email', 'max:255'],
+
+
             ]
         );
         if ($validator->fails()) {
@@ -90,6 +92,8 @@ class UserController extends Controller
                 'name' => $request->name ?? $user->name,
                 'email' => $request->email ?? $user->email,
                 'mobile' => $request->mobile ?? $user->mobile,
+                'password' => $request->password ?? $user->password,
+                'user_type' => $request->user_type ?? $user->user_type,
 
             ]);
             return $this->ajaxResponse(200, 'User updated successfully.', [], []);

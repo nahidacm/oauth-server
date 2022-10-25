@@ -47,6 +47,8 @@
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                     Mobile</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    User Type</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                     Action</th>
                             </tr>
                         </thead>
@@ -67,6 +69,9 @@
 
                                 <td class="align-middle text-center text-sm">
                                     <p class="text-sm font-weight-bold mb-0">{{$user->mobile ?? ''}}</p>
+                                </td>
+                                <td class="align-middle text-center text-sm">
+                                    <p class="text-sm font-weight-bold mb-0">{{$user->user_type ?? ''}}</p>
                                 </td>
 
 
