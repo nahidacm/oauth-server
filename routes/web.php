@@ -50,6 +50,12 @@ Route::post('/change-password', [ChangePassword::class, 'update'])->middleware('
 Route::get('/dashboard', [HomeController::class, 'index'])->name('home')->middleware('auth');
 
 
+Route::group(['prefix' => 'user'], function () {
+    Route::get('/', function () {
+        return response()->json(request()->user());
+    })->middleware('auth:api');
+});
+
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/virtual-reality', [PageController::class, 'vr'])->name('virtual-reality');
     Route::get('/profile', [UserProfileController::class, 'show'])->name('profile');
